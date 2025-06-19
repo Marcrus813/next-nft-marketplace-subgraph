@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+.nft-box {
+
+}
+
+.nft-card {
+    @apply rounded-lg border border-gray-200 shadow-md hover:shadow-lg
+    transition-shadow duration-300 overflow-hidden cursor-pointer max-w-xs;
+}
+
+.nft-tooltip {
+    @apply absolute z-10 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 200px;
+    max-width: 300px;
+    margin-bottom: 5px;
+}
+
+.tooltip-title {
+    @apply font-semibold mb-1;
+}
+
+.tooltip-description {
+    @apply text-xs text-gray-300;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.nft-tooltip:after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #1f2937 transparent transparent transparent;
+}

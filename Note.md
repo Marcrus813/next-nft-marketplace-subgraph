@@ -14,3 +14,26 @@
 - To use env in Next, need to add `NEXT_PUBLIC` prefix
 - Constructing NFT display
     - Referencing Moralis code, the basic design and logic should be the same, just migrate Moralis related to Wagmi
+
+## Roadmap
+
+- [ ] Construct components
+    - [ ] Listing container
+        - [ ] Listing item
+            - [ ] Listing NFT
+                - [ ] Allow marketplace for NFT
+                - [ ] Modal to specify params: `tokenAddress`, `tokenId`, `preferredPayment`, `strictPayment`, `price`
+            - [ ] NFT Card
+                - [ ] Display info
+                    - [ ] Name, symbol, owner
+                    - [ ] Image
+                    - [ ] Price
+                        - [ ] Display by preferred payment
+                    - [ ] Onclick: Buy modal(if owner then hide buy)
+                - [ ] Updating NFT
+                    - [ ] Modal to update info
+                - [ ] Buying
+                    - [ ] Modal to specify payment method
+                        - [ ] Lock to preferred if `strictPayment` is `true`
+                    - [ ] Allow marketplace to transfer ERC20
+            - [ ] Notification
