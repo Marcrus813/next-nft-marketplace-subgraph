@@ -23,8 +23,8 @@
             - [ ] Listing NFT
                 - [ ] Allow marketplace for NFT
                 - [ ] Modal to specify params: `tokenAddress`, `tokenId`, `preferredPayment`, `strictPayment`, `price`
-            - [ ] NFT Card
-                - [ ] Display info
+            - [ ] NFT Card [WIP]
+                - [ ] Display info [WIP]
                     - [ ] Name, symbol, owner
                     - [ ] Image
                     - [ ] Price

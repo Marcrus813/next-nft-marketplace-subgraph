@@ -8,7 +8,7 @@ import TokenInfoModal from "@/components/FunctionComponents/Modals/TokenInfoModa
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
 
 import { formatUnits } from "viem";
-import { useAccount, useChainId, useReadContracts, useWriteContract } from "wagmi";
+import { useAccount, useReadContracts } from "wagmi";
 
 import { contractAddresses } from "@/assets/artifacts/chain-11155111/addresses";
 import { contractArtifact as marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketplace-artifact";
@@ -28,7 +28,7 @@ export const truncateStr = (fullStr, strLen) => {
     );
 };
 
-const formatPrice = (price, paymentAddress) => {
+const formatPrice = (price, paymentAddress, keepDecimal) => {
     let symbol, decimal;
     switch (paymentAddress) {
         case supportedTokens[0]: // ETH
@@ -61,13 +61,12 @@ const formatPrice = (price, paymentAddress) => {
             break;
     }
     const formattedPrice = formatUnits(price, decimal);
-    const roundedPrice = Number(formattedPrice).toFixed(2);
+    const roundedPrice = Number(formattedPrice).toFixed(keepDecimal);
     return `${roundedPrice} ${symbol}`;
 };
 
-const NftBox = ({ tokenAddress, tokenId, preferredPayment, strictPayment, price, seller }) => {
+const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
     const { account, isConnected } = useAccount();
-    const chainId = useChainId();
 
     const [imgUri, setImgUri] = useState("");
     const [tokenName, setTokenName] = useState("");
@@ -80,9 +79,9 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, strictPayment, price,
     // Use wagmi to get contract data
     const {
         data: tokenUri,
-        isFetching: isFetchingtokenUri,
-        error: errorFetchingtokenUri,
-        refetch: refetchtokenUri,
+        isFetching: isFetchingTokenUri,
+        /*error: errorFetchingTokenUri,
+        refetch: refetchTokenUri,*/
     } = useReadContracts({
         contracts: tokenAddress
             ? [
@@ -115,11 +114,11 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, strictPayment, price,
         if (isConnected) {
             updateUi();
         }
-    }, [isConnected]);
+    }, [isConnected, isFetchingTokenUri]);
 
     const isOwnedByUser = seller === account || seller === undefined;
     const formattedSellerAddress = isOwnedByUser ? "you" : truncateStr(seller || "", 15);
-    const formattedPrice = formatPrice(price, preferredPayment);
+    const formattedPrice = formatPrice(price, preferredPayment, 4);
 
     const handleCardClick = () => {
         setShowInfoModal(true);
@@ -138,19 +137,15 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, strictPayment, price,
                             <TokenInfoModal
                                 isVisible={showInfoModal}
                                 onClose={handleInfoModalClose}
+                                tokenName={tokenName}
                                 tokenAddress={tokenAddress}
                                 tokenId={tokenId}
                                 seller={seller}
+                                formattedSellerAddress={formattedSellerAddress}
                                 imgUri={imgUri}
-                                price={price}
-                                preferredPayment={preferredPayment}
-                                strictPayment={strictPayment}
+                                formattedPrice={formattedPrice}
                                 connectedAccount={account}
-                            >
-                                {
-                                    // TODO: To be implemented
-                                }
-                            </TokenInfoModal>
+                            />
                             <NftCard
                                 title={tokenName}
                                 description={tokenDescription}
