@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 import Image from "next/image";
 
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel, Transition } from "@headlessui/react";
 
 const TokenInfoModal = ({
     isVisible,
@@ -29,105 +29,46 @@ const TokenInfoModal = ({
     };
 
     return (
-        <Transition appear={isVisible} as={Fragment} show={isVisible}>
-            <Dialog as={"div"} className={"dialog-container"} onClose={onClose}>
-                <Transition.Child
-                    as={Fragment}
-                    enter={"ease-out duration-300"}
-                    enterFrom={"opacity-0"}
-                    enterTo={"opacity-100"}
-                    leave={"ease-in duration-200"}
-                    leaveFrom={"opacity-100"}
-                    leaveTo={"opacity-0"}
+        <Dialog open={isVisible} onClose={onClose} className={"dialog-container"}>
+            <DialogBackdrop
+                transition
+                className={
+                    "dialog-backdrop transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+                }
+            />
+            <div className={"fixed inset-0 z-10 w-screen overflow-y-auto"}>
+                <div
+                    className={
+                        "flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+                    }
                 >
-                    <div className="modal-backdrop" />
-                </Transition.Child>
-
-                <div className={"modal-container"}>
-                    <div className={"modal-content-wrapper"}>
-                        <Transition.Child
-                            as={Fragment}
-                            enter={"ease-out duration-300"}
-                            enterFrom={"opacity-0 scale-95"}
-                            enterTo={"opacity-100 scale-100"}
-                            leave={"ease-in duration-200"}
-                            leaveFrom={"opacity-100 scale-100"}
-                            leaveTo={"opacity-0 scale-95"}
-                        >
-                            <Dialog.Panel className={"modal-panel"}>
-                                <Dialog.Title as="h3" className={"modal-title"}>
-                                    {`${tokenAddress} #${tokenId} Details`}
-                                </Dialog.Title>
-
-                                <div className={"mt-4"}>
-                                    <div className={"flex flex-col items-center gap-4"}>
-                                        <div className={"nft-image-container"}>
-                                            <Image
-                                                className={"object-contain"}
-                                                src={imgUri}
-                                                alt={"NFT"}
-                                                fill
-                                                loader={() => imgUri}
-                                            />
-                                        </div>
-
-                                        <div className={"details-container"}>
-                                            <div className={"detail-row"}>
-                                                <span className={"detail-row"}>Token Name:</span>
-                                                <span>{tokenName}</span>
-                                            </div>
-                                            <div className={"detail-row"}>
-                                                <span className={"detail-row"}>Token Address:</span>
-                                                <span>{tokenAddress}</span>
-                                            </div>
-                                            <div className={"detail-row"}>
-                                                <span className={"detail-label"}>Token ID:</span>
-                                                <span>#{tokenId}</span>
-                                            </div>
-                                            <div className={"detail-row"}>
-                                                <span className={"detail-row"}>Owner:</span>
-                                                <span>{formattedSellerAddress}</span>
-                                            </div>
-                                            <div className={"detail-row"}>
-                                                <span className={"detail-row"}>Price:</span>
-                                                <span>{formattedPrice}</span>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <DialogPanel
+                        transition
+                        className={
+                            "dialog-panel transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+                        }
+                    >
+                        <div className={"bg-gray-700 px-4 pt-5 pb-4 sm:p-6 sm:pb-4"}>
+                            <div className={"sm:flex sm:items-start"}>
+                                <div
+                                    className={
+                                        "mx-auto flex size-12 shrink-0 items-center justify-center rounded-lg"
+                                    }
+                                >
+                                    <Image
+                                        className={"w-3xs"}
+                                        src={imgUri}
+                                        alt={"NFT"}
+                                        width={"256"}
+                                        height={"256"}
+                                    />
                                 </div>
-
-                                <div className={"button-container"}>
-                                    {userIsOwner ? (
-                                        <button
-                                            type={"button"}
-                                            className={"update-button"}
-                                            onClick={handleUpdateBtnClick}
-                                        >
-                                            Update Listing
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type={"button"}
-                                            className={"buy-button"}
-                                            onClick={handleBuyBtnClick}
-                                        >
-                                            Buy NFT
-                                        </button>
-                                    )}
-                                    <button
-                                        type={"button"}
-                                        className={"close-button"}
-                                        onClick={onClose}
-                                    >
-                                        Close
-                                    </button>
-                                </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
-                    </div>
+                            </div>
+                        </div>
+                    </DialogPanel>
                 </div>
-            </Dialog>
-        </Transition>
+            </div>
+        </Dialog>
     );
 };
 export default TokenInfoModal;
