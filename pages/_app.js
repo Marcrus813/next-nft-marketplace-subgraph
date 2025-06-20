@@ -1,4 +1,6 @@
 import "@/styles/globals.css";
+import "@/styles/Component.functional.display.css";
+import "@/styles/Component.functional.modal.css";
 import "@rainbow-me/rainbowkit/styles.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";

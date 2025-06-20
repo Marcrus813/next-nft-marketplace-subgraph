@@ -2,17 +2,21 @@
  * Used to represent a listing
  * */
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 
 import TokenInfoModal from "@/components/FunctionComponents/Modals/TokenInfoModal";
 
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
 
 import { formatUnits } from "viem";
+import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
+
 import { useAccount, useReadContracts } from "wagmi";
 
-import { contractAddresses } from "@/assets/artifacts/chain-11155111/addresses";
-import { contractArtifact as marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketplace-artifact";
-import { contractArtifact as nftArtifact } from "@/assets/artifacts/chain-11155111/svgNft-artifact";
+import contractAddresses from "@/assets/artifacts/chain-11155111/addresses";
+import { marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketplace-artifact";
+import { svgNftArtifact } from "@/assets/artifacts/chain-11155111/svgNft-artifact";
+
 import NftCard from "@/components/FunctionComponents/Display/NFTCard";
 
 export const truncateStr = (fullStr, strLen) => {
@@ -65,8 +69,8 @@ const formatPrice = (price, paymentAddress, keepDecimal) => {
     return `${roundedPrice} ${symbol}`;
 };
 
-const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
-    const { account, isConnected } = useAccount();
+const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment, seller }) => {
+    const { address: account, isConnected } = useAccount();
 
     const [imgUri, setImgUri] = useState("");
     const [tokenName, setTokenName] = useState("");
@@ -78,17 +82,17 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
 
     // Use wagmi to get contract data
     const {
-        data: tokenUri,
+        data: readNftResult,
         isFetching: isFetchingTokenUri,
-        /*error: errorFetchingTokenUri,
-        refetch: refetchTokenUri,*/
+        error: errorFetchingTokenUri,
+        // refetch: refetchTokenUri,
     } = useReadContracts({
         contracts: tokenAddress
             ? [
                   {
                       address: tokenAddress,
-                      abi: nftArtifact.abi,
-                      functionName: "tokenUri",
+                      abi: svgNftArtifact.abi,
+                      functionName: "tokenURI",
                       args: [tokenId],
                   },
               ]
@@ -98,25 +102,29 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
     });
 
     const updateUi = async () => {
-        if (tokenUri) {
-            const requestUrl = tokenUri.replace("ipfs://", "https://ipfs.io/ipfs/");
-            const tokenUriResponse = await (await fetch(requestUrl)).json();
-            const imgUri = tokenUriResponse.image;
-            const imgUriUrl = imgUri.replace("ipfs://", "https://ipfs.io/ipfs/");
+        const tokenUri = readNftResult[0].result;
 
-            setImgUri(imgUriUrl);
-            setTokenName(tokenUriResponse.name);
-            setTokenDescription(tokenUriResponse.description);
+        if (!errorFetchingTokenUri) {
+            if (tokenUri) {
+                const requestUrl = tokenUri.replace("ipfs://", "https://ipfs.io/ipfs/");
+                const tokenUriResponse = await (await fetch(requestUrl)).json();
+                const imgUri = tokenUriResponse.image;
+                const imgUriUrl = imgUri.replace("ipfs://", "https://ipfs.io/ipfs/");
+
+                setImgUri(imgUriUrl);
+                setTokenName(tokenUriResponse.name);
+                setTokenDescription(tokenUriResponse.description);
+            }
         }
     };
 
     useEffect(() => {
-        if (isConnected) {
+        if (isConnected && !isFetchingTokenUri) {
             updateUi();
         }
-    }, [isConnected, isFetchingTokenUri]);
+    }, [isConnected, isFetchingTokenUri, account]);
 
-    const isOwnedByUser = seller === account || seller === undefined;
+    const isOwnedByUser = compareAddressIgnoreCase(seller, account) || seller === undefined;
     const formattedSellerAddress = isOwnedByUser ? "you" : truncateStr(seller || "", 15);
     const formattedPrice = formatPrice(price, preferredPayment, 4);
 
@@ -132,7 +140,7 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
         <>
             <div>
                 <div>
-                    {imgUri ? (
+                    {
                         <div>
                             <TokenInfoModal
                                 isVisible={showInfoModal}
@@ -143,6 +151,9 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
                                 seller={seller}
                                 formattedSellerAddress={formattedSellerAddress}
                                 imgUri={imgUri}
+                                preferredPayment={preferredPayment}
+                                price={price}
+                                strictPayment={strictPayment}
                                 formattedPrice={formattedPrice}
                                 connectedAccount={account}
                             />
@@ -151,26 +162,33 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, seller }) => {
                                 description={tokenDescription}
                                 onClick={handleCardClick}
                             >
-                                <div className={"p-2"}>
-                                    <div className={"flex flex-col items-end gap-2"}>
-                                        <div>#{tokenId}</div>
-                                        <div className={"italic text-sm"}>
-                                            Owned by {formattedSellerAddress}
+                                {imgUri ? (
+                                    <div className={"p-2"}>
+                                        <div className={"flex flex-col items-end gap-2"}>
+                                            <div>
+                                                {tokenName} #{tokenId}
+                                            </div>
+                                            <div className={"italic text-sm"}>
+                                                Owned by {formattedSellerAddress}
+                                            </div>
+                                            <Image
+                                                loader={() => imgUri}
+                                                src={imgUri}
+                                                height={"200"}
+                                                width={"200"}
+                                                alt={`${tokenName}: #${tokenId}`}
+                                            />
+                                            <div className={"font-bold"}>
+                                                Price: {formattedPrice}
+                                            </div>
                                         </div>
-                                        <Image
-                                            loader={() => imgUri}
-                                            src={imgUri}
-                                            height={"200"}
-                                            width={"200"}
-                                        />
-                                        <div className={"font-bold"}>Price: {formattedPrice}</div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div>Loading NFT data...</div>
+                                )}
                             </NftCard>
                         </div>
-                    ) : (
-                        <div>Loading...</div>
-                    )}
+                    }
                 </div>
             </div>
         </>

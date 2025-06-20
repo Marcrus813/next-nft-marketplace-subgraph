@@ -1,4 +1,4 @@
-const contractArtifact = {
+export const svgNftArtifact = {
     _format: "hh-sol-artifact-1",
     contractName: "SvgNft",
     sourceName: "contracts/SvgNft.sol",
@@ -700,4 +700,3 @@ const contractArtifact = {
     linkReferences: {},
     deployedLinkReferences: {},
 };
-module.exports = { contractArtifact };

@@ -1,7 +1,14 @@
 @import "tailwindcss";
 
-.nft-box {
+.listings-container {
+    @apply container mx-auto;
+}
 
+.listings-container.items-container {
+    @apply flex flex-wrap justify-start gap-1;
+}
+
+.nft-box {
 }
 
 .nft-card {

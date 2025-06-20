@@ -2,7 +2,6 @@
  * Used to present the NFT being listed
  * */
 import React, { useState } from "react";
-import "./styles.css";
 
 const NftCard = ({ title, description, onClick, children }) => {
     const [showTooltip, setShowTooltip] = useState(false);

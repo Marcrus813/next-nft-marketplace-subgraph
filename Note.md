@@ -37,3 +37,20 @@
                         - [ ] Lock to preferred if `strictPayment` is `true`
                     - [ ] Allow marketplace to transfer ERC20
             - [ ] Notification
+
+## Problems
+
+- [x] Front-end exporting
+    - In Node, I can use `module.exports = {obj1, obj2}` then `const {obj1} require`, but in Next context,
+      `export default` is named export, so exports like
+        ```js
+        export default { obj };
+        ```
+        will not work with `import {obj}`, instead, if I want to use `import {obj}`, I should use:
+        ```js
+        export const obj1
+        export const obj2
+        ```
+- [ ] Styling
+    - Tailwind is a bit overwhelming, right now I am using AI to give me a version and tweak around it, during the
+      process should try to get familiar with the classes

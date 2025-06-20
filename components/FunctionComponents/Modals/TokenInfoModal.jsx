@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import Image from "next/image";
-import "./styles.css";
 
 import { Dialog, Transition } from "@headlessui/react";
 
@@ -13,6 +12,9 @@ const TokenInfoModal = ({
     seller,
     formattedSellerAddress,
     imgUri,
+    preferredPayment,
+    price,
+    strictPayment,
     formattedPrice,
     connectedAccount,
 }) => {
@@ -27,8 +29,8 @@ const TokenInfoModal = ({
     };
 
     return (
-        <Transition appear={isVisible} as={Fragment}>
-            <Dialog as={"div"} className={"relative z-10"} onClose={onClose}>
+        <Transition appear={isVisible} as={Fragment} show={isVisible}>
+            <Dialog as={"div"} className={"dialog-container"} onClose={onClose}>
                 <Transition.Child
                     as={Fragment}
                     enter={"ease-out duration-300"}
