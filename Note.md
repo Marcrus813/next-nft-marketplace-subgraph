@@ -41,6 +41,8 @@
                         - [ ] Type search feature
                         - [ ] Gray-out non-preferred if strict payment
             - [ ] Notification
+    - [ ] Listing Page
+    - [ ] Withdraw page
 
 ## Problems
 

@@ -9,7 +9,8 @@ import TokenInfoModal from "@/components/FunctionComponents/Modals/TokenInfoModa
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
 
 import { formatUnits } from "viem";
-import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
+import { compareAddressIgnoreCase, truncateStr } from "@/utils/web3/addressUtils";
+import { formatPrice } from "@/utils/web3/unitUtils";
 
 import { useAccount, useReadContracts } from "wagmi";
 
@@ -19,55 +20,6 @@ import { svgNftArtifact } from "@/assets/artifacts/chain-11155111/svgNft-artifac
 
 import NftCard from "@/components/FunctionComponents/Display/NFTCard";
 import BuyTokenModal from "@/components/FunctionComponents/Modals/BuyTokenModal";
-
-export const truncateStr = (fullStr, strLen) => {
-    if (fullStr.length <= strLen) return fullStr;
-
-    const separator = "...";
-    const separatorLength = separator.length;
-    const charsToShow = strLen - separatorLength;
-    const frontChars = Math.ceil(charsToShow / 2);
-    const backChars = Math.floor(charsToShow / 2);
-    return (
-        fullStr.substring(0, frontChars) + separator + fullStr.substring(fullStr.length - backChars)
-    );
-};
-
-export const formatPrice = (price, paymentAddress, keepDecimal) => {
-    let symbol, decimal;
-    if (compareAddressIgnoreCase(paymentAddress, supportedTokens[0])) {
-        // ETH
-        symbol = "ETH";
-        decimal = 18;
-    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[1])) {
-        // wETH
-        symbol = "wETH";
-        decimal = 18;
-    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[2])) {
-        // USDC
-        symbol = "USDC";
-        decimal = 6;
-    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[3])) {
-        // DAI
-        symbol = "DAI";
-        decimal = 18;
-    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[4])) {
-        // LINK
-        symbol = "LINK";
-        decimal = 18;
-    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[5])) {
-        // UNI
-        symbol = "UNI";
-        decimal = 18;
-    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[6])) {
-        // wBTC
-        symbol = "wBTC";
-        decimal = 8;
-    }
-    const formattedPrice = formatUnits(price, decimal);
-    const roundedPrice = Number(formattedPrice).toFixed(keepDecimal);
-    return `${roundedPrice} ${symbol}`;
-};
 
 const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment, seller }) => {
     const { address: account, isConnected } = useAccount();
@@ -136,7 +88,7 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment,
 
     const isOwnedByUser = compareAddressIgnoreCase(seller, account) || seller === undefined;
     const formattedSellerAddress = isOwnedByUser ? "you" : truncateStr(seller || "", 15);
-    const formattedPrice = formatPrice(price, preferredPayment, 4);
+    const formattedPrice = formatPrice(price, preferredPayment, 4, true);
 
     const handleCardClick = () => {
         setShowInfoModal(true);

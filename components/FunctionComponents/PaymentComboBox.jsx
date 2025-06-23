@@ -6,6 +6,8 @@ import {
     ComboboxButton,
     ComboboxOption,
     ComboboxOptions,
+    Field,
+    Label,
 } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
@@ -78,7 +80,7 @@ const PaymentComboBox = ({ strictPayment, preferredPayment, updateSelected }) =>
                                 compareAddressIgnoreCase(payment.id, preferredPayment)
                             )
                         }
-                        className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-white/10 data-disabled:opacity-40"
+                        className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-white/10 data-disabled:opacity-40 data-disabled:cursor-not-allowed"
                     >
                         <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />
                         <div className={"text-sm/6 text-white"}>{payment.name}</div>

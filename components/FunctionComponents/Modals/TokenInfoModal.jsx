@@ -1,9 +1,8 @@
 import React from "react";
 import Image from "next/image";
 
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
-import { truncateStr } from "@/components/FunctionComponents/Display/NFTBox";
-import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, Button } from "@headlessui/react";
+import { truncateStr, compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
 
 const TokenInfoModal = ({
     isVisible,
@@ -75,29 +74,29 @@ const TokenInfoModal = ({
                                     <span className={"info-details-content"}>{formattedPrice}</span>
                                 </div>
                                 <div className={"info-btn-container"}>
-                                    <button
+                                    <Button
                                         className={"info-close-btn"}
                                         type={"button"}
                                         onClick={onClose}
                                     >
                                         Close
-                                    </button>
+                                    </Button>
                                     {userIsOwner ? (
-                                        <button
-                                            className={"info-update-btn"}
+                                        <Button
+                                            className={"info-update-btn mr-1"}
                                             type={"button"}
                                             onClick={onUpdateClick}
                                         >
                                             Update Listing
-                                        </button>
+                                        </Button>
                                     ) : (
-                                        <button
-                                            className={"info-buy-btn"}
+                                        <Button
+                                            className={"info-buy-btn mr-1"}
                                             type={"button"}
                                             onClick={onBuyClick}
                                         >
                                             Buy NFT
-                                        </button>
+                                        </Button>
                                     )}
                                 </div>
                             </div>
