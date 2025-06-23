@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, Transition } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { truncateStr } from "@/components/FunctionComponents/Display/NFTBox";
 import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
 
@@ -12,31 +12,19 @@ const TokenInfoModal = ({
     tokenAddress,
     tokenId,
     seller,
-    formattedSellerAddress,
     imgUri,
-    preferredPayment,
-    price,
-    strictPayment,
     formattedPrice,
     connectedAccount,
+    onBuyClick,
+    onUpdateClick,
 }) => {
     const userIsOwner = compareAddressIgnoreCase(seller, connectedAccount);
 
-    const handleBuyBtnClick = () => {
-        // TODO: Implement later
-    };
-
-    const handleUpdateBtnClick = () => {
-        // TODO: Implement later
-    };
-
     return (
-        <Dialog open={isVisible} onClose={onClose} className={"dialog-container"}>
+        <Dialog open={isVisible} onClose={onClose} className={"info-dialog-container"}>
             <DialogBackdrop
                 transition
-                className={
-                    "dialog-backdrop transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
-                }
+                className={"info-dialog-backdrop info-dialog-backdrop-animation"}
             />
             <div className={"fixed inset-0 z-10 w-screen overflow-y-auto"}>
                 <div
@@ -46,12 +34,10 @@ const TokenInfoModal = ({
                 >
                     <DialogPanel
                         transition
-                        className={
-                            "dialog-panel transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95"
-                        }
+                        className={"info-dialog-panel info-dialog-panel-animation"}
                     >
                         <div className={"mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left"}>
-                            <DialogTitle as={"h2"} className={"text-base text-gray-200"}>
+                            <DialogTitle as="h3" className={"text-base text-gray-200"}>
                                 <span>
                                     <span className={"font-semibold"}>{`${tokenName}(`}</span>
                                     <span
@@ -61,8 +47,8 @@ const TokenInfoModal = ({
                                 </span>
                             </DialogTitle>
                         </div>
-                        <div className={"info-container"}>
-                            <div className={"img-container"}>
+                        <div className={"info-info-container"}>
+                            <div className={"info-img-container"}>
                                 <Image
                                     className={"rounded-lg w-full"}
                                     src={imgUri}
@@ -71,26 +57,26 @@ const TokenInfoModal = ({
                                     height={"512"}
                                 />
                             </div>
-                            <div className={"details-container"}>
-                                <div className={"details-item"}>
-                                    <span className={"details-title"}>Seller: </span>
-                                    <span className={"details-content"}>{seller}</span>
+                            <div className={"info-details-container"}>
+                                <div className={"info-details-item"}>
+                                    <span className={"info-details-title"}>Seller: </span>
+                                    <span className={"info-details-content"}>{seller}</span>
                                 </div>
-                                <div className={"details-item"}>
-                                    <span className={"details-title"}>Token address: </span>
-                                    <span className={"details-content"}>{tokenAddress}</span>
+                                <div className={"info-details-item"}>
+                                    <span className={"info-details-title"}>Token address: </span>
+                                    <span className={"info-details-content"}>{tokenAddress}</span>
                                 </div>
-                                <div className={"details-item"}>
-                                    <span className={"details-title"}>Token ID: </span>
-                                    <span className={"details-content"}>{tokenId}</span>
+                                <div className={"info-details-item"}>
+                                    <span className={"info-details-title"}>Token ID: </span>
+                                    <span className={"info-details-content"}>{tokenId}</span>
                                 </div>
-                                <div className={"details-item"}>
-                                    <span className={"details-title"}>Price: </span>
-                                    <span className={"details-content"}>{formattedPrice}</span>
+                                <div className={"info-details-item"}>
+                                    <span className={"info-details-title"}>Price: </span>
+                                    <span className={"info-details-content"}>{formattedPrice}</span>
                                 </div>
-                                <div className={"btn-container"}>
+                                <div className={"info-btn-container"}>
                                     <button
-                                        className={"close-btn"}
+                                        className={"info-close-btn"}
                                         type={"button"}
                                         onClick={onClose}
                                     >
@@ -98,17 +84,17 @@ const TokenInfoModal = ({
                                     </button>
                                     {userIsOwner ? (
                                         <button
-                                            className={"update-btn"}
+                                            className={"info-update-btn"}
                                             type={"button"}
-                                            onClick={handleUpdateBtnClick}
+                                            onClick={onUpdateClick}
                                         >
                                             Update Listing
                                         </button>
                                     ) : (
                                         <button
-                                            className={"buy-btn"}
+                                            className={"info-buy-btn"}
                                             type={"button"}
-                                            onClick={handleBuyBtnClick}
+                                            onClick={onBuyClick}
                                         >
                                             Buy NFT
                                         </button>

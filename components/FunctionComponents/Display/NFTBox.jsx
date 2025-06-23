@@ -18,6 +18,7 @@ import { marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketpla
 import { svgNftArtifact } from "@/assets/artifacts/chain-11155111/svgNft-artifact";
 
 import NftCard from "@/components/FunctionComponents/Display/NFTCard";
+import BuyTokenModal from "@/components/FunctionComponents/Modals/BuyTokenModal";
 
 export const truncateStr = (fullStr, strLen) => {
     if (fullStr.length <= strLen) return fullStr;
@@ -32,37 +33,36 @@ export const truncateStr = (fullStr, strLen) => {
     );
 };
 
-const formatPrice = (price, paymentAddress, keepDecimal) => {
+export const formatPrice = (price, paymentAddress, keepDecimal) => {
     let symbol, decimal;
-    switch (paymentAddress) {
-        case supportedTokens[0]: // ETH
-            symbol = "ETH";
-            decimal = 18;
-            break;
-        case supportedTokens[1]: // wETH
-            symbol = "wETH";
-            decimal = 18;
-            break;
-        case supportedTokens[2]: // USDC
-            symbol = "USDC";
-            decimal = 6;
-            break;
-        case supportedTokens[3]: // DAI
-            symbol = "DAI";
-            decimal = 18;
-            break;
-        case supportedTokens[4]: // LINK
-            symbol = "LINK";
-            decimal = 18;
-            break;
-        case supportedTokens[5]: // UNI
-            symbol = "UNI";
-            decimal = 18;
-            break;
-        case supportedTokens[6]: // wBTC
-            symbol = "wBTC";
-            decimal = 8;
-            break;
+    if (compareAddressIgnoreCase(paymentAddress, supportedTokens[0])) {
+        // ETH
+        symbol = "ETH";
+        decimal = 18;
+    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[1])) {
+        // wETH
+        symbol = "wETH";
+        decimal = 18;
+    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[2])) {
+        // USDC
+        symbol = "USDC";
+        decimal = 6;
+    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[3])) {
+        // DAI
+        symbol = "DAI";
+        decimal = 18;
+    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[4])) {
+        // LINK
+        symbol = "LINK";
+        decimal = 18;
+    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[5])) {
+        // UNI
+        symbol = "UNI";
+        decimal = 18;
+    } else if (compareAddressIgnoreCase(paymentAddress, supportedTokens[6])) {
+        // wBTC
+        symbol = "wBTC";
+        decimal = 8;
     }
     const formattedPrice = formatUnits(price, decimal);
     const roundedPrice = Number(formattedPrice).toFixed(keepDecimal);
@@ -75,9 +75,19 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment,
     const [imgUri, setImgUri] = useState("");
     const [tokenName, setTokenName] = useState("");
     const [tokenDescription, setTokenDescription] = useState("");
+
     const [showInfoModal, setShowInfoModal] = useState(false);
     const hideInfoModal = () => {
         setShowInfoModal(false);
+    };
+    const [showBuyModal, setShowBuyModal] = useState(false);
+    const hideBuyModal = () => {
+        setShowBuyModal(false);
+    };
+
+    const [showUpdateModal, setShowUpdateModal] = useState(false);
+    const hideUpdateModal = () => {
+        setShowUpdateModal(false);
     };
 
     // Use wagmi to get contract data
@@ -136,6 +146,20 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment,
         hideInfoModal();
     };
 
+    const handleBuyBtnClick = () => {
+        setShowBuyModal(true);
+    };
+    const handelBuyModalClose = () => {
+        hideBuyModal();
+    };
+
+    const handleUpdateBtnClick = () => {
+        setShowUpdateModal(true);
+    };
+    const handelUpdateModalClose = () => {
+        hideUpdateModal();
+    };
+
     return (
         <>
             <div>
@@ -156,7 +180,21 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment,
                                 strictPayment={strictPayment}
                                 formattedPrice={formattedPrice}
                                 connectedAccount={account}
+                                onBuyClick={handleBuyBtnClick}
+                                onUpdateClick={handleUpdateBtnClick}
                             />
+                            <BuyTokenModal
+                                isVisible={showBuyModal}
+                                onClose={handelBuyModalClose}
+                                tokenName={tokenName}
+                                tokenAddress={tokenAddress}
+                                tokenId={tokenId}
+                                seller={seller}
+                                preferredPayment={preferredPayment}
+                                price={price}
+                                strictPayment={strictPayment}
+                                connectedAccount={account}
+                            ></BuyTokenModal>
                             <NftCard
                                 title={tokenName}
                                 description={tokenDescription}

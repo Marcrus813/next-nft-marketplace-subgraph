@@ -21,21 +21,25 @@
     - [ ] Listing container
         - [ ] Listing item
             - [ ] Listing NFT
-                - [ ] Allow marketplace for NFT
+                - [ ] Approve marketplace for NFT
                 - [ ] Modal to specify params: `tokenAddress`, `tokenId`, `preferredPayment`, `strictPayment`, `price`
             - [ ] NFT Card [WIP]
-                - [ ] Display info [WIP]
-                    - [ ] Name, symbol, owner
-                    - [ ] Image
-                    - [ ] Price
-                        - [ ] Display by preferred payment
-                    - [ ] Onclick: Buy modal(if owner then hide buy)
+                - [x] Display info
+                    - [x] Name, symbol, owner
+                    - [x] Image
+                    - [x] Price
+                        - [x] Display by preferred payment
+                    - [x] Onclick: Buy modal(if owner then show update btn)
                 - [ ] Updating NFT
                     - [ ] Modal to update info
                 - [ ] Buying
                     - [ ] Modal to specify payment method
                         - [ ] Lock to preferred if `strictPayment` is `true`
                     - [ ] Allow marketplace to transfer ERC20
+                    - [ ] Utility support for price conversion from preferred payment to selected payment
+                    - [ ] Combo box component
+                        - [ ] Type search feature
+                        - [ ] Gray-out non-preferred if strict payment
             - [ ] Notification
 
 ## Problems

@@ -49,7 +49,7 @@ const Home = ({ marketplaceContractInfo }) => {
                             <div>Nothing here...</div>
                         ) : (
                             allActiveListings.activeListings.map((nft) => {
-                                console.log(nft);
+                                // console.log(nft);
                                 const {
                                     seller,
                                     tokenAddress,
