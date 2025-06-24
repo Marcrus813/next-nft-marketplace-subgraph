@@ -60,3 +60,57 @@
 - [ ] Styling
     - Tailwind is a bit overwhelming, right now I am using AI to give me a version and tweak around it, during the
       process should try to get familiar with the classes
+- [ ] Using async
+
+    - Within `useEffect`:
+
+        ```js
+        useEffect(() => {
+            setTokenDecimal(getTokenDecimals(preferredPayment).decimals);
+            setPaymentChanged(!compareAddressIgnoreCase(preferredPayment, updatedPayment));
+            let isMounted = true;
+
+            const fetchConvertedPrice = async () => {
+                try {
+                    const convertedPrice = await getConvertedPrice(
+                        preferredPayment,
+                        price,
+                        updatedPayment,
+                    );
+                    if (isMounted) {
+                        setConvertedPrice(convertedPrice);
+                    }
+                } catch (error) {
+                    console.error("Failed to get converted price:", error);
+                }
+            };
+
+            fetchConvertedPrice();
+
+            return () => {
+                isMounted = false;
+            };
+        }, [updatedPayment]);
+        ```
+
+- [ ] Different action in same form
+
+    - ~~Use `action` + `value` in handler:~~ (This is for native `button`)
+
+        ```js
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        const action = formData.get("action");
+
+        if (action === "update") {
+        } else if (action === "remove") {
+        }
+        ```
+
+    - Use a new use state to change on click
+
+## Progress log
+
+- First finish update logic code, so I can update and test other functions
+- Use Ethers in api to convert price, so won't have to redeploy the contract

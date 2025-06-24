@@ -10,7 +10,7 @@ import { supportedTokens } from "@/config/marketplace/supportedTokens";
 
 import { formatUnits } from "viem";
 import { compareAddressIgnoreCase, truncateStr } from "@/utils/web3/addressUtils";
-import { formatPrice } from "@/utils/web3/unitUtils";
+import { formatPrice } from "@/utils/web3/priceUtils";
 
 import { useAccount, useReadContracts } from "wagmi";
 
@@ -20,6 +20,7 @@ import { svgNftArtifact } from "@/assets/artifacts/chain-11155111/svgNft-artifac
 
 import NftCard from "@/components/FunctionComponents/Display/NFTCard";
 import BuyTokenModal from "@/components/FunctionComponents/Modals/BuyTokenModal";
+import UpdateListingModal from "@/components/FunctionComponents/Modals/UpdateListingModal";
 
 const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment, seller }) => {
     const { address: account, isConnected } = useAccount();
@@ -147,6 +148,17 @@ const NftBox = ({ tokenAddress, tokenId, preferredPayment, price, strictPayment,
                                 strictPayment={strictPayment}
                                 connectedAccount={account}
                             ></BuyTokenModal>
+                            <UpdateListingModal
+                                isVisible={showUpdateModal}
+                                onClose={handelUpdateModalClose}
+                                tokenAddress={tokenAddress}
+                                tokenId={tokenId}
+                                seller={seller}
+                                preferredPayment={preferredPayment}
+                                price={price}
+                                strictPayment={strictPayment}
+                                connectedAccount={account}
+                            ></UpdateListingModal>
                             <NftCard
                                 title={tokenName}
                                 description={tokenDescription}

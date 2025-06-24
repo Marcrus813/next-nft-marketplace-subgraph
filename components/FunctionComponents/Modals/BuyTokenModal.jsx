@@ -1,27 +1,21 @@
-import React, { useState, Fragment, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-import {
-    Button,
-    Dialog,
-    DialogBackdrop,
-    DialogPanel,
-    DialogTitle,
-    Transition,
-} from "@headlessui/react";
+import { Button, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
 
 import { useWriteContract } from "wagmi";
 import { marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketplace-artifact";
 import { truncateStr } from "@/utils/web3/addressUtils";
-import { formatPrice } from "@/utils/web3/unitUtils";
+import { formatPrice } from "@/utils/web3/priceUtils";
 
 import {
     approveErc20ForMarketplace,
-    getConvertedPrice,
+    submitBuyToken,
 } from "@/components/FunctionComponents/Modals/BuyTokenModal.js";
-import PaymentComboBox from "@/components/FunctionComponents/PaymentComboBox";
+import PaymentComboBox from "@/components/PageComponents/Combobox/PaymentComboBox";
 import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
+import { getConvertedPrice } from "@/utils/web3/priceUtils";
 
 const BuyTokenModal = ({
     isVisible,
@@ -54,6 +48,12 @@ const BuyTokenModal = ({
         supplyingPrice = getConvertedPrice(preferredPayment, price, selectedPayment);
     }, [selectedPayment]);
 
+    const {
+        data: buyTokenHash,
+        writeContractAsync: writeBuyTokenAsync,
+        isPending: isPendingBuying,
+    } = useWriteContract();
+
     return (
         <Dialog open={isVisible} onClose={onClose} className={"buy-dialog-container"}>
             <DialogBackdrop transition className={"buy-dialog-backdrop"}></DialogBackdrop>
@@ -77,78 +77,86 @@ const BuyTokenModal = ({
                                 </span>
                             </DialogTitle>
                         </div>
-                        <div className={"buy-info-container"}>
-                            <div className={"buy-info-details-container"}>
-                                <div className={"info-details-item"}>
-                                    <span className={"info-details-title"}>NFT address: </span>
-                                    <span className={"info-details-content"}>{tokenAddress}</span>
-                                </div>
-                                <div className={"info-details-item"}>
-                                    <span className={"info-details-title"}>Seller: </span>
-                                    <span className={"info-details-content"}>{seller}</span>
-                                </div>
-                                <div className={"info-details-item"}>
-                                    <span className={"info-details-title"}>
-                                        Preferred payment
-                                        {strictPayment && (
-                                            <span className={"info-details-title"}>(Strict)</span>
-                                        )}
-                                        :{" "}
-                                    </span>
-                                    <span className={"info-details-content"}>
-                                        {addressSymbolMap.get(preferredPayment)}
-                                    </span>
-                                    {!compareAddressIgnoreCase(
-                                        preferredPayment,
-                                        supportedTokens[0],
-                                    ) && <span>({truncateStr(preferredPayment, 8)})</span>}
-                                </div>
-                                <div className={"info-details-item flex flex-row"}>
-                                    <div>
-                                        <span className={"info-details-title"}>Price: </span>
+                        <form onSubmit={submitBuyToken}>
+                            <div className={"buy-info-container"}>
+                                <div className={"buy-info-details-container"}>
+                                    <div className={"info-details-item"}>
+                                        <span className={"info-details-title"}>NFT address: </span>
                                         <span className={"info-details-content"}>
-                                            {formatPrice(price, preferredPayment, 8, true)}
+                                            {tokenAddress}
                                         </span>
+                                    </div>
+                                    <div className={"info-details-item"}>
+                                        <span className={"info-details-title"}>Seller: </span>
+                                        <span className={"info-details-content"}>{seller}</span>
+                                    </div>
+                                    <div className={"info-details-item"}>
+                                        <span className={"info-details-title"}>
+                                            Preferred payment
+                                            {strictPayment && (
+                                                <span className={"info-details-title"}>
+                                                    (Strict)
+                                                </span>
+                                            )}
+                                            :{" "}
+                                        </span>
+                                        <span className={"info-details-content"}>
+                                            {addressSymbolMap.get(preferredPayment)}
+                                        </span>
+                                        {!compareAddressIgnoreCase(
+                                            preferredPayment,
+                                            supportedTokens[0],
+                                        ) && <span>({truncateStr(preferredPayment, 8)})</span>}
+                                    </div>
+                                    <div className={"info-details-item flex flex-row"}>
+                                        <div>
+                                            <span className={"info-details-title"}>Price: </span>
+                                            <span className={"info-details-content"}>
+                                                {formatPrice(price, preferredPayment, 8, true)}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className={"buy-action-container"}>
-                            <div className={"basis-1/2 m-3 flex flex-row items-center"}>
-                                <span className={"font-bold"}>With: </span>
-                                {isPaymentMatch ? (
-                                    <span className={"italic pl-1"}>
-                                        {formatPrice(price, preferredPayment, 8, false)}
-                                    </span>
-                                ) : (
-                                    <span className={"italic pl-1"}>
-                                        {formatPrice(
-                                            getConvertedPrice(
-                                                preferredPayment,
-                                                price,
+                            <div className={"buy-action-container"}>
+                                <div className={"basis-1/2 m-3 flex flex-row items-center"}>
+                                    <span className={"font-bold"}>With: </span>
+                                    {isPaymentMatch ? (
+                                        <span className={"italic pl-1"}>
+                                            {formatPrice(price, preferredPayment, 8, false)}
+                                        </span>
+                                    ) : (
+                                        <span className={"italic pl-1"}>
+                                            {formatPrice(
+                                                getConvertedPrice(
+                                                    preferredPayment,
+                                                    price,
+                                                    selectedPayment,
+                                                ),
                                                 selectedPayment,
-                                            ),
-                                            selectedPayment,
-                                            8,
-                                            false,
-                                        )}
-                                    </span>
-                                )}
-                                <div className={"min-w-[10] w-1/2 pl-1"}>
-                                    <PaymentComboBox
-                                        strictPayment={strictPayment}
-                                        preferredPayment={preferredPayment}
-                                        updateSelected={setSelectedPayment}
-                                    />
+                                                8,
+                                                false,
+                                            )}
+                                        </span>
+                                    )}
+                                    <div className={"min-w-[10] w-1/2 pl-1"}>
+                                        <PaymentComboBox
+                                            strictPayment={strictPayment}
+                                            preferredPayment={preferredPayment}
+                                            updateSelected={setSelectedPayment}
+                                        />
+                                    </div>
+                                </div>
+                                <div className={"buy-action-btn-container"}>
+                                    <Button className={"buy-action-cancel-btn"} onClick={onClose}>
+                                        Cancel
+                                    </Button>
+                                    <Button className={"buy-action-buy-btn"} type={"submit"}>
+                                        Confirm Buy
+                                    </Button>
                                 </div>
                             </div>
-                            <div className={"buy-action-btn-container"}>
-                                <Button className={"buy-action-cancel-btn"} onClick={onClose}>
-                                    Cancel
-                                </Button>
-                                <Button className={"buy-action-buy-btn"}>Confirm Buy</Button>
-                            </div>
-                        </div>
+                        </form>
                     </DialogPanel>
                 </div>
             </div>

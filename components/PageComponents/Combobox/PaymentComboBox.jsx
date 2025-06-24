@@ -6,8 +6,6 @@ import {
     ComboboxButton,
     ComboboxOption,
     ComboboxOptions,
-    Field,
-    Label,
 } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
@@ -39,7 +37,7 @@ const PaymentComboBox = ({ strictPayment, preferredPayment, updateSelected }) =>
     return (
         <Combobox
             value={selectedPayment}
-            onChange={(value) => setSelectedPayment(value)}
+            onChange={(value) => setSelectedPayment(value.id)}
             onClose={() => setQuery("")}
         >
             <div className={"relative"}>
@@ -65,8 +63,9 @@ const PaymentComboBox = ({ strictPayment, preferredPayment, updateSelected }) =>
                 anchor={"bottom"}
                 transition
                 className={clsx(
-                    "w-(--input-width) rounded-xl border border-white/5 bg-white/5 p-1 [--anchor-gap:--spacing(1)] empty:invisible",
+                    "w-(--input-width) rounded-xl border border-white/5 bg-gray-900 p-1 [--anchor-gap:--spacing(1)] empty:invisible",
                     "transition duration-100 ease-in data-leave:data-closed:opacity-0",
+                    "opacity-90",
                     "z-20",
                 )}
             >

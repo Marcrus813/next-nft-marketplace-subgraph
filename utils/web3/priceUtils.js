@@ -37,3 +37,8 @@ export const formatPrice = (price, paymentAddress, keepDecimal, showSymbol) => {
     const roundedPrice = Number(formattedPrice).toFixed(keepDecimal);
     return showSymbol ? `${roundedPrice} ${symbol}` : `${roundedPrice}`;
 };
+
+export const getConvertedPrice = async (referenceToken, referencePrice, resultToken) => {
+    // TODO: To be implemented: Use api call
+    return referencePrice;
+};
