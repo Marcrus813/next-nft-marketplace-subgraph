@@ -1,6 +1,6 @@
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
-import { formatUnits } from "viem";
-import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
+import { formatUnits, parseUnits } from "viem";
+import { compareAddressIgnoreCase, getTokenDecimals } from "@/utils/web3/addressUtils";
 
 export const formatPrice = (price, paymentAddress, keepDecimal, showSymbol) => {
     let symbol, decimal;
@@ -36,6 +36,11 @@ export const formatPrice = (price, paymentAddress, keepDecimal, showSymbol) => {
     const formattedPrice = formatUnits(price, decimal);
     const roundedPrice = Number(formattedPrice).toFixed(keepDecimal);
     return showSymbol ? `${roundedPrice} ${symbol}` : `${roundedPrice}`;
+};
+
+export const parseToUint = (priceInput, paymentAddress) => {
+    const decimals = getTokenDecimals(paymentAddress).decimals;
+    return parseUnits(priceInput, decimals);
 };
 
 export const getConvertedPrice = async (referenceToken, referencePrice, resultToken) => {

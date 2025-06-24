@@ -16,7 +16,7 @@ import GeneralCombobox from "@/components/PageComponents/Combobox/GeneralCombobo
 
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
 import { compareAddressIgnoreCase, getTokenDecimals, truncateStr } from "@/utils/web3/addressUtils";
-import { formatPrice } from "@/utils/web3/priceUtils";
+import { formatPrice, parseToUint } from "@/utils/web3/priceUtils";
 import { getConvertedPrice } from "@/utils/web3/priceUtils";
 
 import { marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketplace-artifact";
@@ -120,7 +120,13 @@ const UpdateListingModal = ({
                 address: contractAddresses["NftMarketplaceModule#NftMarketplace"],
                 abi: marketplaceArtifact.abi,
                 functionName: "updateListing",
-                args: [tokenAddress, tokenId, updatedPayment, updatedPrice, updatedStrictPayment],
+                args: [
+                    tokenAddress,
+                    tokenId,
+                    updatedPayment,
+                    parseToUint(updatedPrice, updatedPayment),
+                    updatedStrictPayment,
+                ],
             })
                 .then((txnHash) => {
                     return txnHash;
