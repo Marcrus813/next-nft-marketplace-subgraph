@@ -34,10 +34,17 @@ const PaymentComboBox = ({ strictPayment, preferredPayment, updateSelected }) =>
                   return payment.name.toLowerCase().includes(query.toLowerCase());
               });
 
+    function isPaymentAllowed(payment) {
+        return !(!strictPayment || compareAddressIgnoreCase(payment, preferredPayment));
+    }
+
     return (
         <Combobox
             value={selectedPayment}
-            onChange={(value) => setSelectedPayment(value.id)}
+            onChange={(value) => {
+                setSelectedPayment(value);
+                updateSelected(value.id);
+            }}
             onClose={() => setQuery("")}
         >
             <div className={"relative"}>
@@ -50,8 +57,6 @@ const PaymentComboBox = ({ strictPayment, preferredPayment, updateSelected }) =>
                     displayValue={(payment) => payment?.name}
                     onChange={(event) => {
                         setQuery(event.target.value);
-                        updateSelected(event.target.id);
-                        console.log(event.target.id);
                     }}
                 />
                 <ComboboxButton className="group absolute inset-y-0 right-0 px-2.5">
@@ -73,12 +78,7 @@ const PaymentComboBox = ({ strictPayment, preferredPayment, updateSelected }) =>
                     <ComboboxOption
                         key={payment.id}
                         value={payment}
-                        disabled={
-                            !(
-                                strictPayment &&
-                                compareAddressIgnoreCase(payment.id, preferredPayment)
-                            )
-                        }
+                        disabled={isPaymentAllowed(payment.id)}
                         className="group flex cursor-default items-center gap-2 rounded-lg px-3 py-1.5 select-none data-focus:bg-white/10 data-disabled:opacity-40 data-disabled:cursor-not-allowed"
                     >
                         <CheckIcon className="invisible size-4 fill-white group-data-selected:visible" />

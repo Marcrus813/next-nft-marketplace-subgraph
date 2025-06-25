@@ -45,5 +45,5 @@ export const parseToUint = (priceInput, paymentAddress) => {
 
 export const getConvertedPrice = async (referenceToken, referencePrice, resultToken) => {
     // TODO: To be implemented: Use api call
-    return referencePrice;
+    return 1e6;
 };

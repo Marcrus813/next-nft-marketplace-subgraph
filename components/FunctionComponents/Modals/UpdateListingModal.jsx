@@ -55,7 +55,9 @@ const UpdateListingModal = ({
     const initialTokenDecimal = getTokenDecimals(preferredPayment).decimals;
     const [tokenDecimal, setTokenDecimal] = useState(initialTokenDecimal);
 
-    const [updatedPrice, setUpdatedPrice] = useState(price);
+    const [updatedPrice, setUpdatedPrice] = useState(
+        formatPrice(price, preferredPayment, tokenDecimal, false),
+    );
     const [convertedPrice, setConvertedPrice] = useState(0);
 
     const [paymentChanged, setPaymentChanged] = useState(false);
@@ -115,6 +117,8 @@ const UpdateListingModal = ({
     async function submitListingUpdate(e) {
         e.preventDefault();
 
+        const updatedPriceInUint = parseToUint(updatedPrice, updatedPayment);
+
         if (isActionUpdate) {
             const txnPromise = writeUpdateListingAsync({
                 address: contractAddresses["NftMarketplaceModule#NftMarketplace"],
@@ -124,7 +128,7 @@ const UpdateListingModal = ({
                     tokenAddress,
                     tokenId,
                     updatedPayment,
-                    parseToUint(updatedPrice, updatedPayment),
+                    updatedPriceInUint,
                     updatedStrictPayment,
                 ],
             })
@@ -163,12 +167,46 @@ const UpdateListingModal = ({
                 { duration: 6000 },
             );
         } else {
-            const txnPromise = writeUpdateListingAsync({
+            const txnPromise = writeRemoveListingAsync({
                 address: contractAddresses["NftMarketplaceModule#NftMarketplace"],
                 abi: marketplaceArtifact.abi,
                 functionName: "cancelListing",
                 args: [tokenAddress, tokenId],
-            });
+            })
+                .then((txnHash) => {
+                    return txnHash;
+                })
+                .catch((err) => {
+                    throw err;
+                });
+            toast.promise(
+                txnPromise,
+                {
+                    loading: "Cancel listing pending...",
+                    success: (txnHash) => (
+                        <div className="flex flex-col">
+                            <span className="font-semibold">Transaction Success!</span>
+                            <a
+                                href={`https://etherscan.io/tx/${txnHash}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-xs underline"
+                            >
+                                View on Etherscan
+                            </a>
+                        </div>
+                    ),
+                    error: (err) => (
+                        <div className="flex flex-col">
+                            <span className="font-semibold">Transaction Failed!</span>
+                            <span className="text-xs">
+                                {err?.shortMessage || err?.message || "Unknown error"}
+                            </span>
+                        </div>
+                    ),
+                },
+                { duration: 6000 },
+            );
         }
     }
 
@@ -235,12 +273,7 @@ const UpdateListingModal = ({
                                                     "mt-3 block w-full rounded-lg border-none bg-white/5 px-3 py-1.5 text-sm/6 text-white",
                                                     "focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25",
                                                 )}
-                                                defaultValue={formatPrice(
-                                                    price,
-                                                    preferredPayment,
-                                                    18,
-                                                    false,
-                                                )}
+                                                defaultValue={updatedPrice}
                                                 type={"number"}
                                                 min={"0"}
                                                 step={"0.01"}
@@ -259,7 +292,7 @@ const UpdateListingModal = ({
                                         </Field>
                                     </div>
                                 </div>
-                                <div className={"update-action-btn-container"} disabled={pending}>
+                                <div className={"update-action-btn-container"}>
                                     <Button className={"update-action-close-btn"} onClick={onClose}>
                                         Close
                                     </Button>
@@ -267,6 +300,7 @@ const UpdateListingModal = ({
                                         className={"update-action-update-btn"}
                                         onClick={() => setIsActionUpdate(true)}
                                         type={"submit"}
+                                        disabled={pending}
                                     >
                                         Update
                                     </Button>
@@ -274,6 +308,7 @@ const UpdateListingModal = ({
                                         className={"update-action-remove-btn"}
                                         onClick={() => setIsActionUpdate(false)}
                                         type={"submit"}
+                                        disabled={pending}
                                     >
                                         REMOVE
                                     </Button>
