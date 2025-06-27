@@ -116,3 +116,4 @@
 - Use Ethers in api to convert price, so won't have to redeploy the contract
 - Not going to complete all token conversion, cuz I will have to have ERC20 tokens to test, which is impossible, hence
   price convert functions will also be left undone
+- Putting listing and withdrawing on same page

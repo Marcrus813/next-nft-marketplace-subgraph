@@ -49,3 +49,17 @@
     border-style: solid;
     border-color: #1f2937 transparent transparent transparent;
 }
+
+.list-listings-container {
+    @apply flex flex-col;
+}
+
+.list-listing-info-container {
+}
+
+.list-listing-info-item {
+    @apply flex flex-row;
+}
+
+.asset-withdraw-container {
+}

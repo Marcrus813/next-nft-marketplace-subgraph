@@ -26,7 +26,9 @@ const GeneralCombobox = ({ options, optionsZ, initialValue, updateSelected }) =>
             value={selectedOption}
             onChange={(value) => {
                 setSelectedOption(value);
-                updateSelected(value.id);
+                if (value != null) {
+                    updateSelected(value.id);
+                }
             }}
             onClose={() => setQuery("")}
         >
