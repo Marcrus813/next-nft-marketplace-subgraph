@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@tailwind utilities;
+
 .listings-container {
     @apply container mx-auto;
 }
@@ -61,5 +63,18 @@
     @apply flex flex-row;
 }
 
+.listing-action-list-btn {
+    @apply inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-blue-500 data-open:bg-gray-700 data-disabled:opacity-60;
+}
+
 .asset-withdraw-container {
+    @apply flex flex-col;
+}
+
+.assets-proceeds-info-item {
+    @apply flex flex-row;
+}
+
+.withdraw-action-withdraw-btn {
+    @apply inline-flex items-center rounded-md bg-blue-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white data-hover:bg-blue-500 data-open:bg-gray-700 data-disabled:opacity-60;
 }

@@ -5,17 +5,11 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 
 import TokenInfoModal from "@/components/FunctionComponents/Modals/TokenInfoModal";
-
-import { supportedTokens } from "@/config/marketplace/supportedTokens";
-
-import { formatUnits } from "viem";
 import { compareAddressIgnoreCase, truncateStr } from "@/utils/web3/addressUtils";
 import { formatPrice } from "@/utils/web3/priceUtils";
 
 import { useAccount, useReadContracts } from "wagmi";
 
-import contractAddresses from "@/assets/artifacts/chain-11155111/addresses";
-import { marketplaceArtifact } from "@/assets/artifacts/chain-11155111/marketplace-artifact";
 import { svgNftArtifact } from "@/assets/artifacts/chain-11155111/svgNft-artifact";
 
 import NftCard from "@/components/FunctionComponents/Display/NFTCard";

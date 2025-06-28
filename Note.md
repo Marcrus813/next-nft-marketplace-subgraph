@@ -97,18 +97,15 @@
 
     - ~~Use `action` + `value` in handler:~~ (This is for native `button`)
 
-        ```js
-        e.preventDefault();
-
-        const formData = new FormData(e.target);
-        const action = formData.get("action");
-
-        if (action === "update") {
-        } else if (action === "remove") {
-        }
-        ```
-
     - Use a new use state to change on click
+
+- [ ] Text input validation
+    - For address is quite straight forward
+        - Need to add NFT support in this case
+            - Use `ERC721: supportsInterface(bytes4 interfaceId)`
+                - ID for ERC721: `0x80ac58cd`
+    - For decimal and uint, the native html validation is not quite enough, it still allows input like `-`, so I am
+      setting the type to `text` and do the validation myself
 
 ## Progress log
 

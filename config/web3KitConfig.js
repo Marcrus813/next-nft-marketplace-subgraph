@@ -2,7 +2,7 @@ import { http, createConfig } from "wagmi";
 import { getDefaultConfig } from "@rainbow-me/rainbowkit";
 import { mainnet, sepolia, hardhat } from "wagmi/chains";
 
-/*export const wagmiConfig = createConfig({
+export const wagmiConfig = createConfig({
     chains: [mainnet, sepolia, hardhat],
     transports: {
         [mainnet.id]: http(),
@@ -10,7 +10,7 @@ import { mainnet, sepolia, hardhat } from "wagmi/chains";
         [hardhat.id]: http(),
     },
     ssr: true,
-});*/
+});
 
 export const config = getDefaultConfig({
     appName: "NFT Marketplace",

@@ -1,5 +1,3 @@
-import { ethers } from "ethers";
-import { priceFeedArtifact } from "@/assets/artifacts/chain-11155111/priceFeed-artifact";
 import { supportedTokens } from "@/config/marketplace/supportedTokens";
 import { compareAddressIgnoreCase } from "@/utils/web3/addressUtils";
 
